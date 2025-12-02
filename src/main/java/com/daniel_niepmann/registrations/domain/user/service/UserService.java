@@ -55,7 +55,7 @@ public class UserService {
     public User findByIdOrThrow(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
 
-        if (userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             throw new EntityNotFoundException("User not found by id: %d.".formatted(id));
         }
 

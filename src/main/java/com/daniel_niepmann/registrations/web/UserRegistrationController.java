@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/registration/users")
+@RequestMapping("/registration")
 @RequiredArgsConstructor
 public class UserRegistrationController {
 
     private final UserRegistrationFacade userRegistrationFacade;
 
-    @PostMapping
+    @PostMapping("/users")
     public void startUsersRegistration() {
         userRegistrationFacade.startUsersRegistration();
     }
