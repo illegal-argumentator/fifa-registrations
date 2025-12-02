@@ -1,8 +1,6 @@
 package com.daniel_niepmann.registrations.common.exception.handler;
 
-import com.daniel_niepmann.registrations.common.exception.EntityAlreadyExistsException;
-import com.daniel_niepmann.registrations.common.exception.ExceptionResponse;
-import com.daniel_niepmann.registrations.common.exception.FileReadException;
+import com.daniel_niepmann.registrations.common.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +24,24 @@ public class MainExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .code(HttpStatus.CONFLICT.value())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .code(HttpStatus.NOT_FOUND.value())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ExceptionResponse> handleApiException(ApiException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .code(exception.getCode())
                 .path(request.getRequestURI())
                 .build());
     }

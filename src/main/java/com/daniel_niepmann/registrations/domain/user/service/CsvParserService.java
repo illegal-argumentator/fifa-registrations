@@ -1,6 +1,5 @@
 package com.daniel_niepmann.registrations.domain.user.service;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.daniel_niepmann.registrations.common.exception.FileReadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,9 +11,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class which parses data from MultipartFile to array of lines.
- */
 @Slf4j
 @Service
 public class CsvParserService {
@@ -24,10 +20,7 @@ public class CsvParserService {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             if (skipFirstLine) {
-                boolean skippedFirstLine = skipFirstLine(reader);
-                if (skippedFirstLine) {
-                    return List.of();
-                }
+                reader.readLine();
             }
 
             String line;
@@ -39,10 +32,6 @@ public class CsvParserService {
         }
 
         return lines;
-    }
-
-    public boolean skipFirstLine(BufferedReader reader) throws IOException {
-        return !StringUtil.isNullOrEmpty(reader.readLine());
     }
 
 }

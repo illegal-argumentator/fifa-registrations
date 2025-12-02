@@ -1,6 +1,6 @@
 package com.daniel_niepmann.registrations.web;
 
-import com.daniel_niepmann.registrations.service.UserUploadFacade;
+import com.daniel_niepmann.registrations.service.user.UserUploadFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

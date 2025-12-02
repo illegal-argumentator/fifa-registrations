@@ -2,6 +2,7 @@ package com.daniel_niepmann.registrations.domain.user.model;
 
 import com.daniel_niepmann.registrations.domain.user.common.dto.Address;
 import com.daniel_niepmann.registrations.domain.user.common.dto.Bio;
+import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,9 +35,11 @@ public class User {
     @Embedded
     private Bio bio;
 
-    private boolean isUsed;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     private String errorMessage;
 
     private LocalDate registeredAt;
+
 }

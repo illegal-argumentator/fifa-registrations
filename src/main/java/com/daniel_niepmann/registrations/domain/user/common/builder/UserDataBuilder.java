@@ -2,6 +2,7 @@ package com.daniel_niepmann.registrations.domain.user.common.builder;
 
 import com.daniel_niepmann.registrations.domain.user.common.dto.Address;
 import com.daniel_niepmann.registrations.domain.user.common.dto.Bio;
+import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class UserDataBuilder {
                 .email(cells[5])
                 .domain(cells[4])
                 .password(cells[12])
+                .status(Status.NOT_IN_USE)
                 .phoneNumber(cells[13])
                 .address(address)
                 .bio(bio);

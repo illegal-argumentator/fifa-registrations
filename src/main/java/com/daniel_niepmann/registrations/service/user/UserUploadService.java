@@ -1,4 +1,4 @@
-package com.daniel_niepmann.registrations.service;
+package com.daniel_niepmann.registrations.service.user;
 
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
@@ -12,9 +12,6 @@ import java.util.Set;
 
 import static com.daniel_niepmann.registrations.domain.user.common.builder.UserDataBuilder.buildUserFromLine;
 
-/**
- * This class is responsible for then mapping lines to users and saving in db.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
