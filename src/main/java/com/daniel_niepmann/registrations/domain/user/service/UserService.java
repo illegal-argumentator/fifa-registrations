@@ -5,7 +5,6 @@ import com.daniel_niepmann.registrations.common.exception.EntityNotFoundExceptio
 import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,14 +15,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final EntityManager entityManager;
 
     private final Lock lock = new ReentrantLock();
 
@@ -45,26 +43,14 @@ public class UserService {
         userRepository.saveAll(allByStatus);
     }
 
-    public User findRandomAvailableUser(Status status) {
+    @Transactional
+    public User findRandomNotInUseUserAndPutInProgress() {
         lock.lock();
 
         try {
-            return (User) entityManager.createNativeQuery("""
-                UPDATE users
-                SET taken = true
-                WHERE id = (
-                    SELECT id
-                    FROM users
-                    WHERE taken = false OR taken is NULL
-                      AND status = :status
-                    ORDER BY RANDOM()
-                    LIMIT 1
-                    FOR UPDATE SKIP LOCKED
-                )
-                RETURNING *
-                """, User.class)
-                    .setParameter("status", status.name())
-                    .getSingleResult();
+            User user = userRepository.findRandomLockedUser();
+            update(user.getId(), User.builder().status(Status.IN_PROGRESS).build());
+            return user;
         } catch (NoResultException e) {
             throw new EntityNotFoundException("No users found.");
         } finally {
@@ -74,10 +60,6 @@ public class UserService {
 
     public List<User> findAllByStatus(Status status) {
         return userRepository.findAllByStatus(status);
-    }
-
-    public List<User> findAllByStatusesIn(Status... statuses) {
-        return userRepository.findAllByStatusIn(List.of(statuses));
     }
 
     public List<User> findAllByIdIn(List<Long> ids) {

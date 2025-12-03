@@ -24,16 +24,20 @@ public class UserRegistrationService {
 
     private final EntityManager entityManager;
 
+    @Transactional
     public List<User> waitForUsersInProgress() {
         int attempts = 1;
         waitSafely(5000);
 
         List<User> usersInProgress = userService.findAllByStatus(Status.IN_PROGRESS);
 
-        while (attempts < 11 && usersInProgress.isEmpty()) {
-            log.info("Waiting for users to become in progress: {}/10", attempts);
+        while (attempts < 40 && usersInProgress.isEmpty()) {
+            log.info("Waiting for users to become in progress: {}/40", attempts);
             waitSafely(5000);
+
+            entityManager.clear();
             usersInProgress = userService.findAllByStatus(Status.IN_PROGRESS);
+
             attempts++;
         }
 

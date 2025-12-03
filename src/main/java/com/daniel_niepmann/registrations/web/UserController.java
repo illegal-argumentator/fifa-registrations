@@ -1,6 +1,5 @@
 package com.daniel_niepmann.registrations.web;
 
-import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
 import com.daniel_niepmann.registrations.web.dto.UpdateUserRequest;
@@ -18,8 +17,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/random")
-    public ResponseEntity<User> getRandomUserByStatus(@RequestParam Status status) {
-        return ResponseEntity.ok(userService.findRandomAvailableUser(status));
+    public ResponseEntity<User> getRandomNotInUseUser() {
+        return ResponseEntity.ok(userService.findRandomNotInUseUserAndPutInProgress());
     }
 
 
