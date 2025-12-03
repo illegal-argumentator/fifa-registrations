@@ -26,7 +26,7 @@ services:
 
   postgres_db_daniel:
     image: postgres:16
-    container_name: db-daniel
+    container_name: db-daniel-niepmann
     restart: unless-stopped
     networks:
       - daniel-prod
@@ -51,4 +51,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  pgdata:
+  pgdata-daniel:
