@@ -26,7 +26,7 @@ services:
 
   postgres_daniel:
     image: postgres:16
-    container_name: postgres-db-daniel
+    container_name: db-daniel
     restart: unless-stopped
     networks:
       - daniel-prod
