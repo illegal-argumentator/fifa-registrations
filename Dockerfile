@@ -1,15 +1,17 @@
 FROM gradle:8.10.2-jdk17 AS build
 WORKDIR /build
 
+COPY gradlew .
 COPY build.gradle settings.gradle ./
-
 COPY gradle ./gradle
 
-RUN gradle dependencies
+RUN chmod +x gradlew
+
+RUN ./gradlew dependencies --no-daemon
 
 COPY src ./src
 
-RUN gradle clean bootJar -x test
+RUN ./gradlew clean bootJar -x test --no-daemon
 
 RUN ls -lh build/libs
 

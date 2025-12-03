@@ -6,6 +6,7 @@ import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,11 +65,12 @@ public class UserService {
                 """, User.class)
                     .setParameter("status", status.name())
                     .getSingleResult();
+        } catch (NoResultException e) {
+            throw new EntityNotFoundException("No users found.");
         } finally {
             lock.unlock();
         }
     }
-
 
     public List<User> findAllByStatus(Status status) {
         return userRepository.findAllByStatus(status);

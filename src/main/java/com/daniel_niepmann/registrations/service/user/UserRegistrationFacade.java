@@ -47,17 +47,17 @@ public class UserRegistrationFacade {
             log.error(exception.getMessage());
             userService.failAllUsersInProgress();
             throw exception;
-        } finally {
-            nstBrowserClient.stopBrowsers(limitedByUsersAvailable);
-            nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);
         }
+
+        nstBrowserClient.stopBrowsers(limitedByUsersAvailable);
+        nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);
     }
 
     public void processUsersRegistration() {
-        List<User> users = userService.findAllByStatusesIn(Status.IN_PROGRESS, Status.NOT_IN_USE);
+        List<User> users = userService.findAllByStatusesIn(Status.NOT_IN_USE);
         while (!users.isEmpty()) {
             startUserRegistration();
-            users = userService.findAllByStatusesIn(Status.IN_PROGRESS, Status.NOT_IN_USE);
+            users = userService.findAllByStatusesIn(Status.NOT_IN_USE);
         }
     }
 }
