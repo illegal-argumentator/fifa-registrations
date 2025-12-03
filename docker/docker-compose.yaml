@@ -19,12 +19,12 @@ services:
       NST_API_URL: ${NST_API_URL}
       NST_BROWSER_API_KEY: ${NST_BROWSER_API_KEY}
     depends_on:
-      - postgres_daniel
+      - postgres_db_daniel
       - nstbrowserless_00
     ports:
       - "${API_PORT}:8080"
 
-  postgres_daniel:
+  postgres_db_daniel:
     image: postgres:16
     container_name: db-daniel
     restart: unless-stopped
