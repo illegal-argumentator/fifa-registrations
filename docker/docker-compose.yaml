@@ -1,0 +1,54 @@
+version: '3.8'
+
+networks:
+  daniel-prod:
+
+services:
+  app-service:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: app-daniel
+    restart: unless-stopped
+    networks:
+      - daniel-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      NST_API_URL: ${NST_API_URL}
+      NST_BROWSER_API_KEY: ${NST_BROWSER_API_KEY}
+    depends_on:
+      - postgres_daniel
+      - nstbrowserless_00
+    ports:
+      - "${API_PORT}:8080"
+
+  postgres_daniel:
+    image: postgres:16
+    container_name: postgres-db-daniel
+    restart: unless-stopped
+    networks:
+      - daniel-prod
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  nstbrowserless_00:
+    image: nstbrowser/browserless:140-202511181200.v1
+    environment:
+      TOKEN: ${NST_TOKEN}
+      VNC_PORT:
+      VNC_PASSWORD:
+    ports:
+      - "${NST_PORT}:8848"
+      - "${VNC_PORT}:6900"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

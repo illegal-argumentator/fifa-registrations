@@ -1,4 +1,4 @@
-package com.daniel_niepmann.registrations.service;
+package com.daniel_niepmann.registrations.service.user;
 
 import com.daniel_niepmann.registrations.domain.user.service.CsvParserService;
 import lombok.RequiredArgsConstructor;
@@ -7,9 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-/**
- * Class which implements Facade pattern for parsing CSV file and parsing data to user entity and saving to db.
- */
 @Service
 @RequiredArgsConstructor
 public class UserUploadFacade {
