@@ -37,7 +37,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-daniel:/var/lib/postgresql/data
 
   nstbrowserless_00:
     image: nstbrowser/browserless:140-202511181200.v1
