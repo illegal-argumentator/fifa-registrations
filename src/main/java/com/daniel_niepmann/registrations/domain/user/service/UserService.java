@@ -72,9 +72,6 @@ public class UserService {
         Optional.ofNullable(user.getStatus()).ifPresent(status -> {
             if (status == Status.COMPLETED) {
                 userById.setRegisteredAt(LocalDate.now());
-                userById.setTaken(false);
-            } else if (status == Status.FAILED) {
-                userById.setTaken(false);
             }
 
             userById.setStatus(status);

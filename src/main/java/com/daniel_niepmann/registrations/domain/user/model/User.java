@@ -29,8 +29,6 @@ public class User {
 
     private String phoneNumber;
 
-    private Boolean taken;
-
     @Embedded
     private Address address;
 

@@ -35,7 +35,6 @@ public class UserDataBuilder {
                 .status(Status.NOT_IN_USE)
                 .phoneNumber(cells[13])
                 .address(address)
-                .taken(false)
                 .bio(bio);
     }
 }
