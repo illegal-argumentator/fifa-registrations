@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class UserDataBuilder {
 
-    // TODO move to Map
     public static User.UserBuilder buildUserFromLine(String[] cells) {
         Address address = Address.builder()
                 .city(cells[1])
@@ -36,6 +35,7 @@ public class UserDataBuilder {
                 .status(Status.NOT_IN_USE)
                 .phoneNumber(cells[13])
                 .address(address)
+                .taken(false)
                 .bio(bio);
     }
 }

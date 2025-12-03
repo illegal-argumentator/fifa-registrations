@@ -5,18 +5,26 @@ import com.daniel_niepmann.registrations.common.exception.EntityNotFoundExceptio
 import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final EntityManager entityManager;
+
+    private final Lock lock = new ReentrantLock();
 
     public void saveAll(Set<User> users) {
         users.forEach(user -> throwIfExistsById(user.getId()));
@@ -27,8 +35,38 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public User findRandomAvailableUser(Status status) {
+        lock.lock();
+
+        try {
+            return (User) entityManager.createNativeQuery("""
+                UPDATE users
+                SET taken = true
+                WHERE id = (
+                    SELECT id
+                    FROM users
+                    WHERE taken = false OR taken is NULL
+                      AND status = :status
+                    ORDER BY RANDOM()
+                    LIMIT 1
+                    FOR UPDATE SKIP LOCKED
+                )
+                RETURNING *
+                """, User.class)
+                    .setParameter("status", status.name())
+                    .getSingleResult();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+
     public List<User> findAllByStatus(Status status) {
         return userRepository.findAllByStatus(status);
+    }
+
+    public List<User> findAllByStatusesIn(Status... statuses) {
+        return userRepository.findAllByStatusIn(List.of(statuses));
     }
 
     public List<User> findAllByIdIn(List<Long> ids) {
@@ -38,8 +76,18 @@ public class UserService {
     public void update(Long id, User user) {
         User userById = findByIdOrThrow(id);
 
-        Optional.ofNullable(user.getStatus()).ifPresent(userById::setStatus);
+        Optional.ofNullable(user.getStatus()).ifPresent(status -> {
+            if (status == Status.COMPLETED) {
+                userById.setRegisteredAt(LocalDate.now());
+                userById.setTaken(false);
+            } else if (status == Status.FAILED) {
+                userById.setTaken(false);
+            }
+
+            userById.setStatus(status);
+        });
         Optional.ofNullable(user.getErrorMessage()).ifPresent(userById::setErrorMessage);
+        Optional.ofNullable(user.getRegisteredAt()).ifPresent(userById::setRegisteredAt);
 
         userRepository.save(userById);
     }

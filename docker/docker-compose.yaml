@@ -1,0 +1,29 @@
+version: '3.8'
+
+networks:
+  daniel-app:
+
+services:
+  app-service:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: daniel-app
+    restart: unless-stopped
+    networks:
+      - daniel-app
+    ports:
+      - "4846:4846"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://root:secret@mongodb:27017/mydatabase?authSource=admin
+  mongodb:
+    image: 'mongo:latest'
+    container_name: 'daniel-db'
+    environment:
+      - 'MONGO_INITDB_DATABASE=mydatabase'
+      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
+      - 'MONGO_INITDB_ROOT_USERNAME=root'
+    networks:
+      - vincent-app
+    ports:
+      - '27017:27017'

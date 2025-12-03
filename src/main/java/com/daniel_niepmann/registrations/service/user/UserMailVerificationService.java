@@ -1,10 +1,12 @@
 package com.daniel_niepmann.registrations.service.user;
 
+import com.daniel_niepmann.registrations.common.exception.ApiException;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
 import com.daniel_niepmann.registrations.web.dto.UserMailVerificationCodeResponse;
 import jakarta.mail.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -17,9 +19,11 @@ import java.util.regex.Pattern;
 public class UserMailVerificationService {
 
     private final UserService userService;
+
     private final Store imapStore;
 
     private static final int MAX_RETRIES = 5;
+
     private static final long RETRY_DELAY_MS = 5000;
 
     public UserMailVerificationCodeResponse verifyUserMail(Long id) {
@@ -51,16 +55,12 @@ public class UserMailVerificationService {
                 }
             }
 
-            if (code == null) {
-                throw new RuntimeException("Verification code not found after " + MAX_RETRIES + " attempts");
-            }
-
             return UserMailVerificationCodeResponse.builder()
-                    .code(code)
+                    .code(code == null ? "" : code)
                     .build();
 
         } catch (MessagingException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new ApiException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
