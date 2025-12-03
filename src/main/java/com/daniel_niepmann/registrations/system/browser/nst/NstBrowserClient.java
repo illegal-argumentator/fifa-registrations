@@ -24,13 +24,19 @@ public class NstBrowserClient {
     @Value("${nst-browser.group_id}")
     private String NST_GROUP_ID;
 
+    @Value("${nst-browser.host}")
+    private String host;
+
+    @Value("${nst-browser.port}")
+    private Long port;
+
     private final ObjectMapper objectMapper;
 
     private final OkHttpUtil okHttpUtil;
 
     private static final String X_API_KEY_HEADER = "x-api-key";
 
-    private static final String NST_API_BASE_URL = "http://localhost:8848/api/v2";
+    private final String NST_API_BASE_URL = "http://%s:%d/api/v2".formatted(host, port);
 
     public GetProfilesResponse getProfilesByCursor() {
         Request request = new Request.Builder()

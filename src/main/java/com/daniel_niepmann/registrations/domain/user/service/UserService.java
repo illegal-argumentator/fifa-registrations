@@ -35,6 +35,15 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public void failAllUsersInProgress() {
+        List<User> allByStatus = findAllByStatus(Status.IN_PROGRESS);
+        for (User byStatus : allByStatus) {
+            byStatus.setStatus(Status.FAILED);
+            byStatus.setErrorMessage("Registration timeout.");
+        }
+        userRepository.saveAll(allByStatus);
+    }
+
     public User findRandomAvailableUser(Status status) {
         lock.lock();
 

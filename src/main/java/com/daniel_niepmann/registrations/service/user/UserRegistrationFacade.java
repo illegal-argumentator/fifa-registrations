@@ -45,7 +45,8 @@ public class UserRegistrationFacade {
             userRegistrationService.waitForUsersToCompleteRegistration(users.stream().map(User::getId).toList());
         } catch (Exception exception) {
             log.error(exception.getMessage());
-            throw new ApiException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            userService.failAllUsersInProgress();
+            throw exception;
         } finally {
             nstBrowserClient.stopBrowsers(limitedByUsersAvailable);
             nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);

@@ -51,8 +51,8 @@ public class UserRegistrationService {
         int attempts = 1;
         List<User> users = userService.findAllByIdIn(userIds);
 
-        while (attempts <= 10 && existsInProgress(users)) {
-            log.info("Waiting for all users to complete: {}/10", attempts);
+        while (attempts <= 15 && existsInProgress(users)) {
+            log.info("Waiting for all users to complete: {}/15", attempts);
             waitSafely(30_000);
 
             entityManager.clear();
