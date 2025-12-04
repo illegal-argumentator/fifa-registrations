@@ -20,7 +20,7 @@ services:
       NST_BROWSER_API_KEY: ${NST_BROWSER_API_KEY}
     depends_on:
       - postgres_db_daniel
-      - nstbrowserless_00
+      - nstbrowserless_01
     ports:
       - "${API_PORT}:8080"
 
@@ -39,7 +39,7 @@ services:
     volumes:
       - pgdata-daniel:/var/lib/postgresql/data
 
-  nstbrowserless_00:
+  nstbrowserless_01:
     image: nstbrowser/browserless:140-202511181200.v1
     environment:
       TOKEN: ${NST_TOKEN}
