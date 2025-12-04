@@ -1,6 +1,7 @@
 package com.daniel_niepmann.registrations.service.user;
 
 import com.daniel_niepmann.registrations.common.exception.ApiException;
+import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
 import com.daniel_niepmann.registrations.system.browser.nst.NstBrowserClient;
@@ -33,10 +34,7 @@ public class UserRegistrationFacade {
 
             if (profileIds.isEmpty()) throw new ApiException("No profiles in NST browser.", HttpStatus.NO_CONTENT.value());
 
-            List<String> limitedByUsersAvailable = profileIds.stream()
-             //                .limit(Math.min(users.size(), 10))
-                    .limit(1)
-                   .toList();
+            List<String> limitedByUsersAvailable = profileIds.stream().limit(10).toList();
         try {
             nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);
             nstBrowserClient.startBrowsers(limitedByUsersAvailable);
@@ -54,10 +52,10 @@ public class UserRegistrationFacade {
     }
 
     public void processUsersRegistration() {
+        List<User> users = userService.findAllByStatus(Status.NOT_IN_USE);
+        while (!users.isEmpty()) {
             startUserRegistration();
-//        List<User> users = userService.findAllByStatusesIn(Status.NOT_IN_USE);
-//        while (!users.isEmpty()) {
-//            users = userService.findAllByStatusesIn(Status.NOT_IN_USE);
-//        }
+            users = userService.findAllByStatus(Status.NOT_IN_USE);
+        }
     }
 }
