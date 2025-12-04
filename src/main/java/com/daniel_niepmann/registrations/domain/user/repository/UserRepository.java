@@ -9,19 +9,18 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findAllByStatus(Status status);
+    List<User> findAllByStatusEquals(Status status);
 
     List<User> findAllByIdIn(List<Long> ids);
 
     @Query(value = """
         SELECT *
         FROM users
-        WHERE status = NOT_IN_USE
+        WHERE status = 'NOT_IN_USE'
         ORDER BY RANDOM()
         LIMIT 1
         FOR UPDATE SKIP LOCKED
         """, nativeQuery = true)
     User findRandomLockedUser();
-
 
 }

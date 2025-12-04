@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public List<User> findAllByStatus(Status status) {
-        return userRepository.findAllByStatus(status);
+        return userRepository.findAllByStatusEquals(status);
     }
 
     public List<User> findAllByIdIn(List<Long> ids) {
