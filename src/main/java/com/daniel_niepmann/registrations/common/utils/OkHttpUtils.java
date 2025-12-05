@@ -16,7 +16,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OkHttpUtil {
+public class OkHttpUtils {
 
     private final ObjectMapper objectMapper;
 

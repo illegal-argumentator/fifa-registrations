@@ -1,6 +1,6 @@
 package com.daniel_niepmann.registrations.system.browser.nst;
 
-import com.daniel_niepmann.registrations.common.utils.OkHttpUtil;
+import com.daniel_niepmann.registrations.common.utils.OkHttpUtils;
 import com.daniel_niepmann.registrations.system.browser.nst.common.dto.GetProfilesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class NstBrowserClient {
 
     private final ObjectMapper objectMapper;
 
-    private final OkHttpUtil okHttpUtil;
+    private final OkHttpUtils okHttpUtils;
 
     private static final String X_API_KEY_HEADER = "x-api-key";
 
@@ -40,7 +40,7 @@ public class NstBrowserClient {
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();
 
-        return okHttpUtil.handleApiRequest(request, GetProfilesResponse.class);
+        return okHttpUtils.handleApiRequest(request, GetProfilesResponse.class);
     }
 
     public void clearProfileCache(String profileId) {
@@ -50,7 +50,7 @@ public class NstBrowserClient {
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();
 
-        okHttpUtil.handleApiRequest(request);
+        okHttpUtils.handleApiRequest(request);
     }
 
     public void clearProfileCookies(String profileId) {
@@ -60,7 +60,7 @@ public class NstBrowserClient {
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();
 
-        okHttpUtil.handleApiRequest(request);
+        okHttpUtils.handleApiRequest(request);
     }
 
     public void startBrowsers(List<String> profileIds) {
@@ -72,7 +72,7 @@ public class NstBrowserClient {
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();
 
-        okHttpUtil.handleApiRequest(request);
+        okHttpUtils.handleApiRequest(request);
     }
 
     public void stopBrowsers(List<String> profileIds) {
@@ -84,6 +84,6 @@ public class NstBrowserClient {
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();
 
-        okHttpUtil.handleApiRequest(request);
+        okHttpUtils.handleApiRequest(request);
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.daniel_niepmann.registrations.common.utils.ProxyUtils.rotateProxyByUrl;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -52,6 +54,22 @@ public class UserRegistrationFacade {
     }
 
     public void processUsersRegistration() {
+        List<String> rotateUrls = List.of(
+                "https://reboot.connect.resocks.net/change-ip?uuid=JKyMqgXEWf",
+                "https://reboot.connect.resocks.net/change-ip?uuid=8auIqqHRCr",
+                "https://reboot.connect.resocks.net/change-ip?uuid=e8QyvytL6G",
+                "https://reboot.connect.resocks.net/change-ip?uuid=v6ZcH1QTED",
+                "https://reboot.connect.resocks.net/change-ip?uuid=WCB7nI6F3V",
+                "https://reboot.connect.resocks.net/change-ip?uuid=NxJDluZCcb",
+                "https://reboot.connect.resocks.net/change-ip?uuid=quuqW5QVmC",
+                "https://reboot.connect.resocks.net/change-ip?uuid=Cg2dR0YjRf",
+                "https://reboot.connect.resocks.net/change-ip?uuid=7kKw0UZprj",
+                "https://reboot.connect.resocks.net/change-ip?uuid=R7Z9M3G1g0"
+        );
+        for (String rotateUrl : rotateUrls) {
+            rotateProxyByUrl(rotateUrl);
+        }
+
         List<User> users = userService.findAllByStatus(Status.NOT_IN_USE);
         while (!users.isEmpty()) {
             startUserRegistration();

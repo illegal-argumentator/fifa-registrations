@@ -55,9 +55,9 @@ public class UserRegistrationService {
         int attempts = 1;
         List<User> users = userService.findAllByIdIn(userIds);
 
-        while (attempts <= 20 && existsInProgress(users)) {
-            log.info("Waiting for all users to complete: {}/20", attempts);
-            waitSafely(30_000);
+        while (attempts <= 40 && existsInProgress(users)) {
+            log.info("Waiting for all users to complete: {}/40", attempts);
+            waitSafely(10_000);
 
             entityManager.clear();
             users = userService.findAllByIdIn(userIds);
@@ -69,7 +69,7 @@ public class UserRegistrationService {
             if (user.getStatus() == Status.IN_PROGRESS) {
                 log.warn("User {} registration time out.", user.getId());
                 userService.update(user.getId(), User.builder()
-                        .status(Status.FAILED)
+                        .status(Status.NOT_IN_USE)
                         .errorMessage("Registration time out.")
                         .build());
             }
