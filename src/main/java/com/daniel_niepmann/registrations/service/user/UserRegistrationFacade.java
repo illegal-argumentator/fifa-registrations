@@ -36,7 +36,7 @@ public class UserRegistrationFacade {
 
             if (profileIds.isEmpty()) throw new ApiException("No profiles in NST browser.", HttpStatus.NO_CONTENT.value());
 
-            List<String> limitedByUsersAvailable = profileIds.stream().limit(10).toList();
+            List<String> limitedByUsersAvailable = profileIds.stream().limit(20).toList();
         try {
             nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);
             nstBrowserClient.startBrowsers(limitedByUsersAvailable);
@@ -54,22 +54,6 @@ public class UserRegistrationFacade {
     }
 
     public void processUsersRegistration() {
-        List<String> rotateUrls = List.of(
-                "https://reboot.connect.resocks.net/change-ip?uuid=JKyMqgXEWf",
-                "https://reboot.connect.resocks.net/change-ip?uuid=8auIqqHRCr",
-                "https://reboot.connect.resocks.net/change-ip?uuid=e8QyvytL6G",
-                "https://reboot.connect.resocks.net/change-ip?uuid=v6ZcH1QTED",
-                "https://reboot.connect.resocks.net/change-ip?uuid=WCB7nI6F3V",
-                "https://reboot.connect.resocks.net/change-ip?uuid=NxJDluZCcb",
-                "https://reboot.connect.resocks.net/change-ip?uuid=quuqW5QVmC",
-                "https://reboot.connect.resocks.net/change-ip?uuid=Cg2dR0YjRf",
-                "https://reboot.connect.resocks.net/change-ip?uuid=7kKw0UZprj",
-                "https://reboot.connect.resocks.net/change-ip?uuid=R7Z9M3G1g0"
-        );
-        for (String rotateUrl : rotateUrls) {
-            rotateProxyByUrl(rotateUrl);
-        }
-
         List<User> users = userService.findAllByStatus(Status.NOT_IN_USE);
         while (!users.isEmpty()) {
             startUserRegistration();
