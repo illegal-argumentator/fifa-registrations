@@ -5,12 +5,11 @@ import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
 import com.daniel_niepmann.registrations.web.dto.UserMailVerificationCodeResponse;
 import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,84 +18,113 @@ import java.util.regex.Pattern;
 public class UserMailVerificationService {
 
     private final UserService userService;
-
     private final Store imapStore;
 
     private static final int MAX_RETRIES = 5;
-
     private static final long RETRY_DELAY_MS = 5000;
+    private static final int MESSAGE_SEARCH_LIMIT = 100;
 
-    public UserMailVerificationCodeResponse verifyUserMail(Long id) {
-        User user = userService.findByIdOrThrow(id);
+    public UserMailVerificationCodeResponse verifyUserMail(Long userId) {
+        User user = userService.findByIdOrThrow(userId);
 
         try {
-            Folder inboxFolder = imapStore.getFolder("INBOX");
-            inboxFolder.open(Folder.READ_ONLY);
+            Folder inbox = imapStore.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
 
-            String code = null;
-            int attempt = 0;
+            String code = "";
 
-            while (code == null && attempt < MAX_RETRIES) {
-                Message[] messages = inboxFolder.getMessages();
+            for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
 
-                code = Arrays.stream(messages)
-                        .filter(message -> isMessageToUser(message, user.getEmail()))
-                        .map(this::extractCodeFromMessage)
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElse(null);
+                // Force IMAP refresh
+                inbox.getMessageCount();
 
-                if (code == null) {
-                    attempt++;
-                    System.out.println("Code not found, retrying " + attempt + "/" + MAX_RETRIES);
+                Message[] messages = getLatestMessages(inbox, MESSAGE_SEARCH_LIMIT);
+
+                for (int i = messages.length - 1; i >= 0; i--) {
+                    Message message = messages[i];
+
+                    if (!isMessageToUser(message, user.getEmail())) continue;
+
+                    String extracted = extractCodeFromMessage(message);
+                    if (extracted != null) {
+                        code = extracted;
+                        break;
+                    }
+                }
+
+                if (!code.isEmpty()) break;
+
+                if (attempt < MAX_RETRIES) {
                     Thread.sleep(RETRY_DELAY_MS);
-                    inboxFolder.close(false);
-                    inboxFolder.open(Folder.READ_ONLY);
                 }
             }
 
             return UserMailVerificationCodeResponse.builder()
-                    .code(code == null ? "" : code)
+                    .code(code)
                     .build();
 
-        } catch (MessagingException | InterruptedException e) {
-            throw new ApiException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+        } catch (Exception e) {
+            throw new ApiException("Mailbox read error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
-    private boolean isMessageToUser(Message message, String userEmail) {
-        try {
-            Address[] to = message.getRecipients(Message.RecipientType.TO);
-            if (to == null) return false;
+    private Message[] getLatestMessages(Folder folder, int limit) throws MessagingException {
+        int total = folder.getMessageCount();
+        if (total == 0) return new Message[0];
 
-            return Arrays.stream(to)
-                    .anyMatch(addr -> addr.toString().contains(userEmail));
-        } catch (MessagingException e) {
+        int start = Math.max(1, total - limit + 1);
+        return folder.getMessages(start, total);
+    }
+
+    private boolean isMessageToUser(Message message, String email) {
+        try {
+            Address[] recipients = message.getRecipients(Message.RecipientType.TO);
+            if (recipients == null) return false;
+
+            for (Address addr : recipients) {
+                if (addr instanceof InternetAddress ia) {
+                    if (ia.getAddress().equalsIgnoreCase(email)) return true;
+                }
+            }
+            return false;
+
+        } catch (Exception e) {
             return false;
         }
     }
 
     private String extractCodeFromMessage(Message message) {
         try {
-            Object content = message.getContent();
+            String text = extractTextRecursive(message);
+            return findCode(text);
 
-            if (content instanceof String text) {
-                return findCode(text);
-            } else if (content instanceof Multipart multipart) {
-                for (int i = 0; i < multipart.getCount(); i++) {
-                    BodyPart part = multipart.getBodyPart(i);
-                    if (part.isMimeType("text/plain")) {
-                        return findCode((String) part.getContent());
-                    } else if (part.isMimeType("text/html")) {
-                        String html = (String) part.getContent();
-                        String text = html.replaceAll("<[^>]+>", "");
-                        return findCode(text);
-                    }
-                }
-            }
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private String extractTextRecursive(Part part) throws Exception {
+        if (part.isMimeType("text/plain")) {
+            return (String) part.getContent();
+        }
+
+        if (part.isMimeType("text/html")) {
+            String html = (String) part.getContent();
+            return html.replaceAll("<[^>]+>", "").replaceAll("&nbsp;", " ").trim();
+        }
+
+        if (part.isMimeType("multipart/*")) {
+            Multipart mp = (Multipart) part.getContent();
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < mp.getCount(); i++) {
+                String sub = extractTextRecursive(mp.getBodyPart(i));
+                if (sub != null) sb.append(sub).append("\n");
+            }
+
+            return sb.toString();
+        }
+
         return null;
     }
 
@@ -106,10 +134,6 @@ public class UserMailVerificationService {
         Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
         Matcher matcher = pattern.matcher(text);
 
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return null;
+        return matcher.find() ? matcher.group() : null;
     }
-
 }
