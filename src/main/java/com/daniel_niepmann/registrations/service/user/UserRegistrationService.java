@@ -41,10 +41,6 @@ public class UserRegistrationService {
             attempts++;
         }
 
-        if (usersInProgress.isEmpty()) {
-            throw new ApiException("Not found users in progress.", HttpStatus.NOT_FOUND.value());
-        }
-
         waitSafely(500);
 
         return usersInProgress;

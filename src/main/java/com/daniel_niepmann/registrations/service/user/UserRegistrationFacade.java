@@ -36,11 +36,15 @@ public class UserRegistrationFacade {
 
             if (profileIds.isEmpty()) throw new ApiException("No profiles in NST browser.", HttpStatus.NO_CONTENT.value());
 
-            List<String> limitedByUsersAvailable = profileIds.stream().limit(20).toList();
+            List<String> limitedByUsersAvailable = profileIds.stream().limit(1).toList();
         try {
             nstBrowserService.clearAllBrowsers(limitedByUsersAvailable);
             nstBrowserClient.startBrowsers(limitedByUsersAvailable);
             List<User> users = userRegistrationService.waitForUsersInProgress();
+
+            if (users.isEmpty()) {
+                return;
+            }
 
             userRegistrationService.waitForUsersToCompleteRegistration(users.stream().map(User::getId).toList());
         } catch (Exception exception) {
