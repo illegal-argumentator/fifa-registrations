@@ -38,6 +38,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(length = 5000)
     private String errorMessage;
 
     private LocalDate registeredAt;

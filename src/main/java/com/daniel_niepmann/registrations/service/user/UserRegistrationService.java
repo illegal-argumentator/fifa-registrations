@@ -31,8 +31,8 @@ public class UserRegistrationService {
 
         List<User> usersInProgress = userService.findAllByStatus(Status.IN_PROGRESS);
 
-        while (attempts < 40 && usersInProgress.isEmpty()) {
-            log.info("Waiting for users to become in progress: {}/40", attempts);
+        while (attempts < 30 && usersInProgress.isEmpty()) {
+            log.info("Waiting for users to become in progress: {}/30", attempts);
             waitSafely(5000);
 
             entityManager.clear();
@@ -55,8 +55,8 @@ public class UserRegistrationService {
         int attempts = 1;
         List<User> users = userService.findAllByIdIn(userIds);
 
-        while (attempts <= 15 && existsInProgress(users)) {
-            log.info("Waiting for all users to complete: {}/15", attempts);
+        while (attempts <= 20 && existsInProgress(users)) {
+            log.info("Waiting for all users to complete: {}/20", attempts);
             waitSafely(30_000);
 
             entityManager.clear();
