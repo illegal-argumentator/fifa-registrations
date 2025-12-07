@@ -50,8 +50,7 @@ public class UserRegistrationFacade {
                     "http://0F2PB5Xj:HITheYRb@connect.resocks.net:8080",
                     "http://8TL6oFXR:kaSXYFiY@connect.resocks.net:8080",
                     "http://rBAH9tsn:oB9X2Dj9@connect.resocks.net:8080",
-                    "http://6CGZQsa7:cyyHj5HL@connect.resocks.net:8080",
-                    "http://usa.rotating.proxyrack.net:10000"
+                    "http://6CGZQsa7:cyyHj5HL@connect.resocks.net:8080"
                     );
 
             List<String> profileIds = new ArrayList<>();
