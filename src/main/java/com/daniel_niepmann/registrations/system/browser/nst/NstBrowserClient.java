@@ -1,6 +1,8 @@
 package com.daniel_niepmann.registrations.system.browser.nst;
 
 import com.daniel_niepmann.registrations.common.utils.OkHttpUtils;
+import com.daniel_niepmann.registrations.system.browser.nst.common.dto.CreateProfileRequest;
+import com.daniel_niepmann.registrations.system.browser.nst.common.dto.CreateProfileResponse;
 import com.daniel_niepmann.registrations.system.browser.nst.common.dto.GetProfilesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +82,30 @@ public class NstBrowserClient {
 
         Request request = new Request.Builder()
                 .url(NST_API_BASE_URL + "/browsers")
+                .delete(RequestBody.create(json, MediaType.get(APPLICATION_JSON_VALUE)))
+                .addHeader(X_API_KEY_HEADER, NST_API_KEY)
+                .build();
+
+        okHttpUtils.handleApiRequest(request);
+    }
+
+    public CreateProfileResponse createProfile(CreateProfileRequest createProfileRequest) {
+        String json = objectMapper.writeValueAsString(createProfileRequest);
+
+        Request request = new Request.Builder()
+                .url(NST_API_BASE_URL + "/profiles")
+                .post(RequestBody.create(json, MediaType.get(APPLICATION_JSON_VALUE)))
+                .addHeader(X_API_KEY_HEADER, NST_API_KEY)
+                .build();
+
+        return okHttpUtils.handleApiRequest(request, CreateProfileResponse.class);
+    }
+
+    public void deleteProfiles(List<String> profileIds) {
+        String json = objectMapper.writeValueAsString(profileIds);
+
+        Request request = new Request.Builder()
+                .url(NST_API_BASE_URL + "/profiles")
                 .delete(RequestBody.create(json, MediaType.get(APPLICATION_JSON_VALUE)))
                 .addHeader(X_API_KEY_HEADER, NST_API_KEY)
                 .build();

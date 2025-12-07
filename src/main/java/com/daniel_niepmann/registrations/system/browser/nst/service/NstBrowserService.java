@@ -15,14 +15,11 @@ public class NstBrowserService {
 
     private final NstBrowserClient nstBrowserClient;
 
-    public void clearAllBrowsers(List<String> profileIds) {
-        for (String profileId : profileIds) {
-            try {
-                nstBrowserClient.clearProfileCookies(profileId);
-                nstBrowserClient.clearProfileCache(profileId);
-            } catch (ApiException e) {
-                log.warn("Probably no cache or cookies in profile: {}", e.getMessage());
-            }
+    public void killAllBrowsers(List<String> profileIds) {
+        try {
+            nstBrowserClient.stopBrowsers(profileIds);
+        } catch (ApiException e) {
+            log.warn("Probably no profile: {}", e.getMessage());
         }
     }
 
