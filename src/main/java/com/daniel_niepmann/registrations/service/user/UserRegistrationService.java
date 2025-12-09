@@ -1,13 +1,11 @@
 package com.daniel_niepmann.registrations.service.user;
 
-import com.daniel_niepmann.registrations.common.exception.ApiException;
 import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.service.UserService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
