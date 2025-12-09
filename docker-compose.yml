@@ -1,0 +1,9 @@
+version: "3.3"
+
+
+services:
+  bruno_service:
+    build: ../
+    restart: unless-stopped
+    ports:
+      - "13088:13088"
