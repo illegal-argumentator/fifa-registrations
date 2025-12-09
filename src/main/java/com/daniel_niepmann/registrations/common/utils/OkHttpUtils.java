@@ -36,6 +36,7 @@ public class OkHttpUtils {
     public String handleApiRequest(Request request) {
         try (Response response = okHttpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
+                System.err.println(request.url());
                 String message = objectMapper.readValue(response.body().string(), Object.class).toString();
                 logOkHttpUtilError(message);
                 throw new ApiException(message, HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -43,6 +44,7 @@ public class OkHttpUtils {
 
             return response.body().string();
         } catch (IOException e) {
+            System.err.println(request.url());
             logOkHttpUtilError(e.getMessage());
             throw new ApiException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }

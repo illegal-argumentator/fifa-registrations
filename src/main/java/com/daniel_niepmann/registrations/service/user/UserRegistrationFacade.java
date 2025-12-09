@@ -10,6 +10,7 @@ import com.daniel_niepmann.registrations.system.browser.nst.common.dto.CreatePro
 import com.daniel_niepmann.registrations.system.browser.nst.common.dto.GetProfilesResponse;
 import com.daniel_niepmann.registrations.system.browser.nst.common.dto.embedded.Profile;
 import com.daniel_niepmann.registrations.system.browser.nst.service.NstBrowserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.daniel_niepmann.registrations.common.utils.ProxyUtils.rotateProxyByUrl;
 
@@ -40,28 +44,46 @@ public class UserRegistrationFacade {
     public void startUserRegistration() {
 
         // TODO create profiles with proxies
-            List<String> proxies = List.of(
-                    "http://NZV3jU5C:1LvF7Hc4@connect.resocks.net:8080",
-                    "http://w17q2ptd:p6wofJCa@connect.resocks.net:8080",
-                    "http://3YxEFmJ6:ZDW188xw@connect.resocks.net:8080",
-                    "http://UBJCFiDg:6FLUpyvo@connect.resocks.net:8080",
-                    "http://t7BWqEO9:17lEPVFp@connect.resocks.net:8080",
-                    "http://jNFFY7K3:x1MzLJhV@connect.resocks.net:8080",
-                    "http://0F2PB5Xj:HITheYRb@connect.resocks.net:8080",
-                    "http://8TL6oFXR:kaSXYFiY@connect.resocks.net:8080",
-                    "http://rBAH9tsn:oB9X2Dj9@connect.resocks.net:8080",
-                    "http://6CGZQsa7:cyyHj5HL@connect.resocks.net:8080"
-                    );
+        List<String> proxies = Stream.of(
+                "http://NZV3jU5C:1LvF7Hc4@connect.resocks.net:8080",
+                "http://3YxEFmJ6:ZDW188xw@connect.resocks.net:8080",
+                "http://w17q2ptd:p6wofJCa@connect.resocks.net:8080",
 
-            List<String> profileIds = new ArrayList<>();
-            proxies.forEach(proxy -> {
-                CreateProfileResponse nstBrowserClientProfile = nstBrowserClient.createProfile(CreateProfileRequest.builder()
-                        .groupId(NST_GROUP_ID)
-                        .proxy(proxy)
-                        .build());
+
+                "http://Z3yIy68g:uAT0m2dW@connect.resocks.net:8080",
+                "http://HtNqmc6p:ZGTIhJdg@connect.resocks.net:8080",
+                "http://dpzvVafz:OKlC5ZFj@connect.resocks.net:8080",
+
+                "http://PpVdU680:o2KG2llC@connect.resocks.net:8080",
+                "http://nivkPLZ0:6BzWOmrl@connect.resocks.net:8080",
+                "http://rtgtl2ov:J4rsYQ0C@connect.resocks.net:8080",
+
+                "http://0GJ9J7gg:JdaE2Zi5@connect.resocks.net:8080"
+        ).limit(13).toList();
+        rotate();
+        //
+        List<String> profileIds = new ArrayList<>();
+        for (int i = 0; i < proxies.size(); i++) {
+            var proxy = proxies.get(i);
+            var req = CreateProfileRequest.builder()
+                    .groupId(NST_GROUP_ID)
+                    .proxy(proxy)
+                    .fingerprint(new CreateProfileRequest.Fingerprint(
+                            new CreateProfileRequest.Fingerprint.Screen(
+                                    1280,
+                                    1080
+                            )
+                    ))
+                    .build();
+            try {
+                CreateProfileResponse nstBrowserClientProfile = nstBrowserClient.createProfile(i, req);
                 profileIds.add(nstBrowserClientProfile.getData().getProfileId());
-            });
-            if (profileIds.isEmpty()) throw new ApiException("No profiles in NST browser.", HttpStatus.NO_CONTENT.value());
+            }catch (Exception e){
+                log.error("Error creating profile with proxy {}: {}", proxy, e.getMessage());
+            }
+        }
+
+        if (profileIds.isEmpty()) throw new ApiException("No profiles in NST browser.", HttpStatus.NO_CONTENT.value());
 
         try {
             nstBrowserClient.startBrowsers(profileIds);
@@ -79,27 +101,35 @@ public class UserRegistrationFacade {
         }
     }
 
-    public void processUsersRegistration() {
+    private void rotate() {
         List<String> rotateLinks = List.of(
                 "https://reboot.connect.resocks.net/change-ip?uuid=JKyMqgXEWf",
                 "https://reboot.connect.resocks.net/change-ip?uuid=8auIqqHRCr",
                 "https://reboot.connect.resocks.net/change-ip?uuid=e8QyvytL6G",
-                "https://reboot.connect.resocks.net/change-ip?uuid=v6ZcH1QTED0",
-                "https://reboot.connect.resocks.net/change-ip?uuid=WCB7nI6F3V",
-                "https://reboot.connect.resocks.net/change-ip?uuid=NxJDluZCcb",
-                "https://reboot.connect.resocks.net/change-ip?uuid=quuqW5QVmC",
-                "https://reboot.connect.resocks.net/change-ip?uuid=Cg2dR0YjRf",
-                "https://reboot.connect.resocks.net/change-ip?uuid=7kKw0UZprj",
-                "https://reboot.connect.resocks.net/change-ip?uuid=R7Z9M3G1g0"
+                "https://reboot.connect.resocks.net/change-ip?uuid=QSX1uCeAQ4",
+                "https://reboot.connect.resocks.net/change-ip?uuid=YjfGKQAdGY",
+                "https://reboot.connect.resocks.net/change-ip?uuid=GO1CwPDkOb",
+                "https://reboot.connect.resocks.net/change-ip?uuid=YEKK9KBDho",
+                "https://reboot.connect.resocks.net/change-ip?uuid=jQpctHF58I",
+                "https://reboot.connect.resocks.net/change-ip?uuid=0K06fT51RY",
+                "https://reboot.connect.resocks.net/change-ip?uuid=57RJclQPdZ"
         );
         for (String rotateLink : rotateLinks) {
             rotateProxyByUrl(rotateLink);
         }
+    }
+
+    public void processUsersRegistration() {
+        rotate();
 
         List<User> users = userService.findAllByStatus(Status.NOT_IN_USE);
+        Set<String> deletedProfileIds = new HashSet<>();
         while (!users.isEmpty()) {
             GetProfilesResponse profilesByCursor = nstBrowserClient.getProfilesByCursor();
-            List<String> profileIds = profilesByCursor.data().profiles().stream().map(Profile::profileId).toList();
+            List<String> profileIds = profilesByCursor.data().profiles().stream()
+                    .map(Profile::profileId)
+                    .filter(deletedProfileIds::add)
+                    .toList();
             nstBrowserService.killAllBrowsers(profileIds);
 
             startUserRegistration();

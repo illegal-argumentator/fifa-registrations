@@ -15,7 +15,7 @@ public class UserRegistrationController {
 
     @PostMapping
     public void startUsersRegistration() {
-        userRegistrationFacade.processUsersRegistration();
+        new Thread(userRegistrationFacade::processUsersRegistration,"Reg").start();
     }
 
 }
