@@ -85,7 +85,7 @@ public class ImageUtils {
      * @param globalY глобальная Y координата
      */
     public static void hover(double globalX, double globalY) {
-        smoothHover((int) globalX, (int) globalY, new Random().nextInt(400,503)); // 500ms по умолчанию
+        smoothHover((int) globalX, (int) globalY, new Random().nextInt(480,503)); // 500ms по умолчанию
     }
 
     /**
