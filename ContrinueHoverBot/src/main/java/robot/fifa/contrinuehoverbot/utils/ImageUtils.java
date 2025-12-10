@@ -13,6 +13,7 @@ import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 public class ImageUtils {
 
@@ -84,7 +85,7 @@ public class ImageUtils {
      * @param globalY глобальная Y координата
      */
     public static void hover(double globalX, double globalY) {
-        smoothHover((int) globalX, (int) globalY, 500); // 500ms по умолчанию
+        smoothHover((int) globalX, (int) globalY, new Random().nextInt(400,503)); // 500ms по умолчанию
     }
 
     /**

@@ -10,7 +10,6 @@ import robot.fifa.contrinuehoverbot.utils.TextBoxUtils;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class Watcher {
@@ -19,7 +18,7 @@ public class Watcher {
     private static final Logger log = LoggerFactory.getLogger(Watcher.class);
 
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 963)
     void run(){
         try {
             watchContinueBtn();
@@ -43,7 +42,7 @@ public class Watcher {
         if (bbox == null) {
             log.info("No bbox found");
             var random = new java.util.Random();
-            ImageUtils.hover(random.nextInt(300,890), random.nextInt(200,600));
+            ImageUtils.hover(random.nextInt(100,1030), random.nextInt(150,931));
 //            Files.write(new File(folder, "screen_" + System.currentTimeMillis() + ".png").toPath(), screen);
             return;
         }
@@ -59,8 +58,8 @@ public class Watcher {
         double globalX = screenBounds.x + centerXLocal;
         double globalY = screenBounds.y + centerYLocal;
         var random = new java.util.Random();
-        globalY+= random.nextInt(-5,6);
-        globalX+= random.nextInt(-11,12);
+        globalY+= random.nextInt(-5,5);
+        globalX+= random.nextInt(-7,10);
 
         log.info("Hovering over the text box at (global): {}, {}", globalX, globalY);
 
