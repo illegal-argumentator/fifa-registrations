@@ -1,0 +1,19 @@
+
+services:
+  contrinue-hover-bot:
+    build:
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      TOKEN:
+      VNC_PORT:
+      VNC_PASSWORD:
+      DISPLAY: ":1"
+    ports:
+      - "8000:8848"
+      - "6900:6900"
+    volumes:
+      - ./screenshots:/app/screenshots
+    env_file:
+      - .env
+

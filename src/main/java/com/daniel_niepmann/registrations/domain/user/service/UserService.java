@@ -5,7 +5,6 @@ import com.daniel_niepmann.registrations.common.exception.EntityNotFoundExceptio
 import com.daniel_niepmann.registrations.domain.user.common.type.Status;
 import com.daniel_niepmann.registrations.domain.user.model.User;
 import com.daniel_niepmann.registrations.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final EntityManager entityManager;
 
     private final Lock lock = new ReentrantLock();
 
@@ -69,7 +66,6 @@ public class UserService {
         return userRepository.findAllByIdIn(ids);
     }
 
-    @Transactional
     public void update(Long id, User user) {
         User userById = findByIdOrThrow(id);
 
@@ -84,7 +80,6 @@ public class UserService {
         Optional.ofNullable(user.getRegisteredAt()).ifPresent(userById::setRegisteredAt);
 
         userRepository.save(userById);
-        entityManager.flush();
     }
 
     public void throwIfExistsById(Long id) {

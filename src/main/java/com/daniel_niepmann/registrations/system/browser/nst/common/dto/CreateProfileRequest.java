@@ -1,5 +1,6 @@
 package com.daniel_niepmann.registrations.system.browser.nst.common.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,16 +13,18 @@ public class CreateProfileRequest {
     private String platform;
     private String groupId;
     private String proxy;
+    private Fingerprint fingerprint;
 
     @Data
+    @AllArgsConstructor
     public static class Fingerprint {
-        private Localization localization;
+        private Screen screen;
 
         @Data
-        public static class Localization {
-            private String language;
-            private List<String> languages;
-            private String timezone;
+        @AllArgsConstructor
+        public static class Screen {
+            private int width;
+            private int height;
         }
     }
 }
