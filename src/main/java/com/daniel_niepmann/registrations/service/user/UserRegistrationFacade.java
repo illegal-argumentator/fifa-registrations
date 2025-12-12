@@ -129,6 +129,7 @@ public class UserRegistrationFacade {
             List<String> profileIds = profilesByCursor.data().profiles().stream()
                     .map(Profile::profileId)
                     .filter(deletedProfileIds::add)
+                    .limit(0)
                     .toList();
             nstBrowserService.killAllBrowsers(profileIds);
 

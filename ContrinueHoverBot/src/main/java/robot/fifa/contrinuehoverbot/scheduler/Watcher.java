@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import robot.fifa.contrinuehoverbot.utils.AppUtils;
 import robot.fifa.contrinuehoverbot.utils.ImageUtils;
 import robot.fifa.contrinuehoverbot.utils.TextBoxUtils;
 
@@ -20,19 +21,19 @@ public class Watcher {
 
 
     @Scheduled(fixedRate = 1000)
-    void run(){
+    void run() {
         try {
             watchContinueBtn();
-        }catch (Exception ex){
-            log.error("Error in watcher",ex);
+        } catch (Exception ex) {
+            log.error("Error in watcher", ex);
         }
     }
 
 
     void watchContinueBtn() throws IOException {
-        int screenIndex = 0;
+        int screenIndex = AppUtils.isWindows() ? 1 : 0;
         var screen = ImageUtils.snapshot(screenIndex);
-        var scale = 1.8d;
+        var scale = 2.1d;
 //        var folder = new File("screenshots");
 //        if (!folder.exists()) {
 //            folder.mkdirs();
@@ -42,7 +43,7 @@ public class Watcher {
         var bbox = TextBoxUtils.findTextBox(screen, "CONTINUE", scale);
         if (bbox == null) {
             log.info("No bbox found");
-            ImageUtils.hover(random.nextInt(100,1030), random.nextInt(150,931));
+            ImageUtils.hover(random.nextInt(500, 730), random.nextInt(250, 931));
 //            Files.write(new File(folder, "screen_" + System.currentTimeMillis() + ".png").toPath(), screen);
             return;
         }
@@ -58,8 +59,8 @@ public class Watcher {
         double globalX = screenBounds.x + centerXLocal;
         double globalY = screenBounds.y + centerYLocal;
 
-        globalY+= random.nextInt(-5,5);
-        globalX+= random.nextInt(-7,10);
+        globalY += random.nextInt(-3, 3);
+        globalX += random.nextInt(-3, 3);
 
         log.info("Hovering over the text box at (global): {}, {}", globalX, globalY);
 
