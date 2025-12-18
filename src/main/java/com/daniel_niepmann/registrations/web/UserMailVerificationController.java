@@ -21,4 +21,8 @@ public class UserMailVerificationController {
         return ResponseEntity.ok(userMailVerificationService.verifyUserMail(id));
     }
 
+    @GetMapping
+    public ResponseEntity<UserMailVerificationCodeResponse> verifyUserMail(@RequestParam String email) {
+        return ResponseEntity.ok(userMailVerificationService.verifyUserMail(email));
+    }
 }

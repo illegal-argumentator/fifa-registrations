@@ -42,23 +42,22 @@ public class UserRegistrationFacade {
     private String NST_GROUP_ID;
 
     public void startUserRegistration() {
-
         // TODO create profiles with proxies
         List<String> proxies = Stream.of(
                 "http://NZV3jU5C:1LvF7Hc4@connect.resocks.net:8080",
                 "http://3YxEFmJ6:ZDW188xw@connect.resocks.net:8080",
-                "http://w17q2ptd:p6wofJCa@connect.resocks.net:8080",
+                "http://w17q2ptd:p6wofJCa@connect.resocks.net:8080"//,
 
 
-                "http://Z3yIy68g:uAT0m2dW@connect.resocks.net:8080",
-                "http://HtNqmc6p:ZGTIhJdg@connect.resocks.net:8080",
-                "http://dpzvVafz:OKlC5ZFj@connect.resocks.net:8080",
-
-                "http://PpVdU680:o2KG2llC@connect.resocks.net:8080",
-                "http://nivkPLZ0:6BzWOmrl@connect.resocks.net:8080",
-                "http://rtgtl2ov:J4rsYQ0C@connect.resocks.net:8080",
-
-                "http://0GJ9J7gg:JdaE2Zi5@connect.resocks.net:8080"
+//                "http://Z3yIy68g:uAT0m2dW@connect.resocks.net:8080",
+//                "http://HtNqmc6p:ZGTIhJdg@connect.resocks.net:8080",
+//                "http://dpzvVafz:OKlC5ZFj@connect.resocks.net:8080",
+//
+//                "http://PpVdU680:o2KG2llC@connect.resocks.net:8080",
+//                "http://nivkPLZ0:6BzWOmrl@connect.resocks.net:8080",
+//                "http://rtgtl2ov:J4rsYQ0C@connect.resocks.net:8080",
+//
+//                "http://0GJ9J7gg:JdaE2Zi5@connect.resocks.net:8080"
         ).limit(13).toList();
         rotate();
         //
@@ -105,14 +104,14 @@ public class UserRegistrationFacade {
         List<String> rotateLinks = List.of(
                 "https://reboot.connect.resocks.net/change-ip?uuid=JKyMqgXEWf",
                 "https://reboot.connect.resocks.net/change-ip?uuid=8auIqqHRCr",
-                "https://reboot.connect.resocks.net/change-ip?uuid=e8QyvytL6G",
-                "https://reboot.connect.resocks.net/change-ip?uuid=QSX1uCeAQ4",
-                "https://reboot.connect.resocks.net/change-ip?uuid=YjfGKQAdGY",
-                "https://reboot.connect.resocks.net/change-ip?uuid=GO1CwPDkOb",
-                "https://reboot.connect.resocks.net/change-ip?uuid=YEKK9KBDho",
-                "https://reboot.connect.resocks.net/change-ip?uuid=jQpctHF58I",
-                "https://reboot.connect.resocks.net/change-ip?uuid=0K06fT51RY",
-                "https://reboot.connect.resocks.net/change-ip?uuid=57RJclQPdZ"
+                "https://reboot.connect.resocks.net/change-ip?uuid=e8QyvytL6G"//,
+//                "https://reboot.connect.resocks.net/change-ip?uuid=QSX1uCeAQ4",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=YjfGKQAdGY",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=GO1CwPDkOb",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=YEKK9KBDho",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=jQpctHF58I",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=0K06fT51RY",
+//                "https://reboot.connect.resocks.net/change-ip?uuid=57RJclQPdZ"
         );
         for (String rotateLink : rotateLinks) {
             rotateProxyByUrl(rotateLink);
@@ -129,7 +128,7 @@ public class UserRegistrationFacade {
             List<String> profileIds = profilesByCursor.data().profiles().stream()
                     .map(Profile::profileId)
                     .filter(deletedProfileIds::add)
-                    .limit(0)
+                    .limit(20)
                     .toList();
             nstBrowserService.killAllBrowsers(profileIds);
 

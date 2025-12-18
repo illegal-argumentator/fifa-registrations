@@ -68,6 +68,50 @@ public class UserMailVerificationService {
         }
     }
 
+    public UserMailVerificationCodeResponse verifyUserMail(String email) {
+
+        try {
+            Folder inbox = imapStore.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+
+            String code = "";
+
+            for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+
+                // Force IMAP refresh
+                inbox.getMessageCount();
+
+                Message[] messages = getLatestMessages(inbox, MESSAGE_SEARCH_LIMIT);
+
+                for (int i = messages.length - 1; i >= 0; i--) {
+                    Message message = messages[i];
+
+                    if (!isMessageToUser(message, email)) continue;
+
+                    String extracted = extractCodeFromMessage(message);
+                    if (extracted != null) {
+                        code = extracted;
+                        break;
+                    }
+                }
+
+                if (!code.isEmpty()) break;
+
+                if (attempt < MAX_RETRIES) {
+                    Thread.sleep(RETRY_DELAY_MS);
+                }
+            }
+
+            return UserMailVerificationCodeResponse.builder()
+                    .code(code)
+                    .build();
+
+        } catch (Exception e) {
+            throw new ApiException("Mailbox read error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+    }
+
+
     private Message[] getLatestMessages(Folder folder, int limit) throws MessagingException {
         int total = folder.getMessageCount();
         if (total == 0) return new Message[0];
